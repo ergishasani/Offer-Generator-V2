@@ -1,0 +1,62 @@
+// src/assets/styles/components/protected-layout.scss
+@use '../variables' as v;
+@use 'sass:color';
+
+.protected-layout {
+  display: flex;
+  height: 100vh;
+
+  .sidebar {
+    width: 240px;
+    background: v.$brand-dark;
+    color: v.$brand-light;
+    padding: v.$space-lg;
+    display: flex;
+    flex-direction: column;
+
+    .logo {
+      font-size: 1.75rem;
+      margin-bottom: v.$space-lg;
+      text-align: center;
+    }
+
+    nav {
+      flex: 1;
+
+      a {
+        display: block;
+        padding: v.$space-sm v.$space-md;
+        margin-bottom: v.$space-sm;
+        border-radius: 4px;
+        color: inherit;
+
+        &.active {
+          background: v.$brand-medium;
+        }
+        &:hover {
+          background: v.$brand-medium;
+        }
+      }
+    }
+
+    .logout-btn {
+      margin-top: v.$space-md;
+      padding: v.$space-sm;
+      background: v.$error;
+      border: none;
+      color: v.$brand-light;
+      border-radius: 4px;
+      cursor: pointer;
+
+      &:hover {
+        background: color.adjust(v.$error, $lightness: -10%);
+      }
+    }
+  }
+
+  .content {
+    flex: 1;
+    overflow-y: auto;
+    padding: v.$space-lg;
+  }
+}

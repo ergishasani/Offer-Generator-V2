@@ -1,26 +1,31 @@
+// src/pages/SignupPage.jsx
 import React, { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import '../assets/styles/pages/auth.scss'
 
 export default function SignupPage() {
+  const { signup } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [confirm, setConfirm] = useState('')
+  const [passwordConfirm, setPasswordConfirm] = useState('')
   const [error, setError] = useState('')
-  const { signup } = useAuth()
-  const navigate = useNavigate()
+  const [loading, setLoading] = useState(false)
+  const nav = useNavigate()
 
   const handleSubmit = async e => {
     e.preventDefault()
-    setError('')
-    if (password !== confirm) {
-      return setError("Passwords don't match")
+    if (password !== passwordConfirm) {
+      return setError('Passwords do not match')
     }
+    setError(''); setLoading(true)
     try {
       await signup(email, password)
-      navigate('/offer')
+      nav('/dashboard')
     } catch {
       setError('Failed to create account')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -51,15 +56,17 @@ export default function SignupPage() {
           Confirm Password
           <input
             type="password"
-            value={confirm}
-            onChange={e => setConfirm(e.target.value)}
+            value={passwordConfirm}
+            onChange={e => setPasswordConfirm(e.target.value)}
             required
           />
         </label>
-        <button type="submit">Sign Up</button>
+        <button type="submit" disabled={loading}>
+          {loading ? 'Signing up…' : 'Sign Up'}
+        </button>
       </form>
       <p>
-        Already have an account? <Link to="/login">Log in here</Link>
+        Already have an account? <Link to="/login">Log In</Link>
       </p>
     </div>
   )

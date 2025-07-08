@@ -1,0 +1,40 @@
+@use 'sass:color';
+@use '../variables' as v;
+
+.admin-offers-page {
+  h1 {
+    margin-bottom: v.$space-md;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th,
+    td {
+      padding: v.$space-sm;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+
+    th {
+      background: #f0f0f0;
+    }
+
+    button {
+      margin-right: v.$space-sm;
+      padding: v.$space-sm v.$space-md;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+
+      &.send-btn {
+        background: v.$accent;
+        color: #fff;
+        &:hover {
+          background: color.adjust(v.$accent, $lightness: -10%);
+        }
+      }
+    }
+  }
+}

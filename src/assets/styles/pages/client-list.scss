@@ -1,0 +1,59 @@
+@use 'sass:color';
+@use '../variables' as v;
+
+.client-list-page {
+  h1 {
+    margin-bottom: v.$space-md;
+  }
+
+  .btn {
+    display: inline-block;
+    margin-bottom: v.$space-md;
+    padding: v.$space-sm v.$space-md;
+    background: v.$accent;
+    color: #fff;
+    border-radius: 4px;
+    &:hover {
+      background: color.adjust(v.$accent, $lightness: -10%);
+    }
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th,
+    td {
+      padding: v.$space-sm;
+      border: 1px solid #ddd;
+    }
+
+    th {
+      background: #f0f0f0;
+    }
+
+    button {
+      margin-right: v.$space-sm;
+      padding: v.$space-sm v.$space-md;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+
+      &.delete {
+        background: v.$error;
+        color: #fff;
+        &:hover {
+          background: color.adjust(v.$error, $lightness: -10%);
+        }
+      }
+
+      &:not(.delete) {
+        background: v.$accent;
+        color: #fff;
+        &:hover {
+          background: color.adjust(v.$accent, $lightness: -10%);
+        }
+      }
+    }
+  }
+}

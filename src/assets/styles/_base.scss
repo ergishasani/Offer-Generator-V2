@@ -1,0 +1,30 @@
+@use 'sass:color';
+@use './variables' as v;
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: v.$font-base;
+  font-size: 16px;
+  background: v.$brand-light;
+  color: #333;
+}
+
+a {
+  color: v.$accent;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+button {
+  font-family: inherit;
+}

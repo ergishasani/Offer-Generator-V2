@@ -1,0 +1,32 @@
+@use '../variables' as v;
+
+.dashboard-page {
+  h1 {
+    margin-bottom: v.$space-lg;
+  }
+
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: v.$space-lg;
+
+    .metric {
+      background: #fff;
+      padding: v.$space-md;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(#000, 0.1);
+      text-align: center;
+
+      h2 {
+        font-size: 2rem;
+        margin-bottom: v.$space-sm;
+        color: v.$accent;
+      }
+
+      p {
+        font-size: 0.9rem;
+        color: #555;
+      }
+    }
+  }
+}

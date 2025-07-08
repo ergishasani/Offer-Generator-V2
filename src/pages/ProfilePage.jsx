@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { doc, getDoc, setDoc } from 'firebase/firestore'
 import { db } from '../services/firebase'
 import { useAuth } from '../contexts/AuthContext'
+import '../assets/styles/pages/profile.scss'
 
 export default function ProfilePage() {
   const { user } = useAuth()
@@ -24,14 +25,17 @@ export default function ProfilePage() {
     if (!user) return
     const ref = doc(db, 'users', user.uid, 'companyProfile', 'profile')
     getDoc(ref)
-      .then((snap) => {
-        if (snap.exists()) setProfile(snap.data())
+      .then(snap => {
+        if (snap.exists()) {
+          setProfile(snap.data())
+        }
       })
       .finally(() => setLoading(false))
   }, [user])
 
   const handleChange = e => {
-    setProfile(prev => ({ ...prev, [e.target.name]: e.target.value }))
+    const { name, value } = e.target
+    setProfile(prev => ({ ...prev, [name]: value }))
   }
 
   const handleSubmit = async e => {
@@ -50,13 +54,13 @@ export default function ProfilePage() {
     }
   }
 
-  if (loading) return <div>Loading profile…</div>
+  if (loading) return <div className="profile-page">Loading profile…</div>
 
   return (
     <div className="profile-page">
       <h1>Company Profile</h1>
       {message && <div className="message">{message}</div>}
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="profile-form">
         {[
           { label: 'Company Name', name: 'name' },
           { label: 'Address', name: 'address' },

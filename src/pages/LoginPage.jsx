@@ -1,22 +1,27 @@
+// src/pages/LoginPage.jsx
 import React, { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import '../assets/styles/pages/auth.scss'
 
 export default function LoginPage() {
+  const { login } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
-  const { login } = useAuth()
-  const navigate = useNavigate()
+  const [loading, setLoading] = useState(false)
+  const nav = useNavigate()
 
   const handleSubmit = async e => {
     e.preventDefault()
-    setError('')
+    setError(''); setLoading(true)
     try {
       await login(email, password)
-      navigate('/offer')
+      nav('/dashboard')
     } catch {
-      setError('Failed to log in. Check your credentials.')
+      setError('Failed to sign in')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -43,10 +48,12 @@ export default function LoginPage() {
             required
           />
         </label>
-        <button type="submit">Log In</button>
+        <button type="submit" disabled={loading}>
+          {loading ? 'Logging in…' : 'Log In'}
+        </button>
       </form>
       <p>
-        Don’t have an account? <Link to="/signup">Sign up here</Link>
+        Need an account? <Link to="/signup">Sign Up</Link>
       </p>
     </div>
   )

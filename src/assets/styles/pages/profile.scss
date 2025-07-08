@@ -1,0 +1,56 @@
+/* src/assets/styles/pages/profile.scss */
+
+.profile-page {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 8px rgba(#000, 0.05);
+
+  h1 {
+    margin-bottom: 1rem;
+  }
+
+  .message {
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    background: #e0ffe0;
+    border: 1px solid #0c0;
+    border-radius: 0.25rem;
+    color: #060;
+  }
+
+  .profile-form {
+    display: grid;
+    gap: 1rem;
+
+    label {
+      display: flex;
+      flex-direction: column;
+      font-weight: 500;
+
+      input {
+        margin-top: 0.25rem;
+        padding: 0.5rem;
+        border: 1px solid #bbb;
+        border-radius: 0.25rem;
+      }
+    }
+
+    button {
+      width: fit-content;
+      padding: 0.5rem 1rem;
+      background: #28a745;
+      color: #fff;
+      border: none;
+      border-radius: 0.25rem;
+      cursor: pointer;
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+  }
+}

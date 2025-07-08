@@ -1,0 +1,32 @@
+/* src/assets/styles/components/navbar.scss */
+.navbar {
+  background: #fff;
+  border-bottom: 1px solid #eee;
+  padding: 0.5rem 1rem;
+
+  .nav-list {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 1.5rem;
+
+    a {
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+
+      &.active {
+        color: #007bff;
+      }
+    }
+
+    .logout-btn {
+      background: transparent;
+      border: none;
+      color: #c00;
+      cursor: pointer;
+      font-weight: 500;
+    }
+  }
+}

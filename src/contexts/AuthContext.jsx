@@ -1,50 +1,42 @@
 // src/contexts/AuthContext.jsx
-
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from 'react'
 import {
+  onAuthStateChanged,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged
-} from "firebase/auth";
-import { auth } from "../services/firebase";
+  signOut
+} from 'firebase/auth'
+import { auth } from '../services/firebase'
 
-// Create the context
-const AuthContext = createContext();
+const AuthContext = createContext()
 
-// Custom hook for easy access
 export function useAuth() {
-  return useContext(AuthContext);
+  return useContext(AuthContext)
 }
 
-// Provider component
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null)
+  const [loading, setLoading] = useState(true)
 
-  // Subscribe to auth state changes
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      setUser(firebaseUser);
-      setLoading(false);
-    });
-    return unsubscribe;
-  }, []);
+    const unsubscribe = onAuthStateChanged(auth, u => {
+      setUser(u)
+      setLoading(false)
+    })
+    return unsubscribe
+  }, [])
 
   // Sign up with email & password
-  function signup(email, password) {
-    return createUserWithEmailAndPassword(auth, email, password);
-  }
+  const signup = (email, password) =>
+    createUserWithEmailAndPassword(auth, email, password)
 
   // Log in with email & password
-  function login(email, password) {
-    return signInWithEmailAndPassword(auth, email, password);
-  }
+  const login = (email, password) =>
+    signInWithEmailAndPassword(auth, email, password)
 
   // Log out
-  function logout() {
-    return signOut(auth);
-  }
+  const logout = () =>
+    signOut(auth)
 
   const value = {
     user,
@@ -52,12 +44,11 @@ export function AuthProvider({ children }) {
     signup,
     login,
     logout
-  };
+  }
 
   return (
     <AuthContext.Provider value={value}>
-      {/* Only render children once we know auth state */}
-      {!loading && children}
+      {loading ? null : children}
     </AuthContext.Provider>
-  );
+  )
 }

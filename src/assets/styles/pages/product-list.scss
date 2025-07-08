@@ -1,0 +1,57 @@
+/* src/assets/styles/pages/product-list.scss */
+
+.product-list-page {
+  padding: 2rem;
+
+  h1 {
+    margin-bottom: 1rem;
+  }
+
+  .add-button {
+    margin-bottom: 1rem;
+    padding: 0.5rem 1rem;
+    background: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 0.25rem;
+    cursor: pointer;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+
+    thead th {
+      text-align: left;
+      padding: 0.5rem;
+      background: #f5f5f5;
+      border-bottom: 2px solid #ddd;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid #eee;
+    }
+
+    td {
+      padding: 0.5rem;
+    }
+
+    button {
+      margin-right: 0.5rem;
+      padding: 0.25rem 0.5rem;
+      border: none;
+      border-radius: 0.25rem;
+      cursor: pointer;
+
+      &.delete {
+        background: #dc3545;
+        color: #fff;
+      }
+
+      &:not(.delete) {
+        background: #17a2b8;
+        color: #fff;
+      }
+    }
+  }
+}
