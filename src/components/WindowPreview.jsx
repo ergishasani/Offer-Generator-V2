@@ -1,11 +1,25 @@
 // src/components/WindowPreview.jsx
 import React from 'react'
-import WindowSvg from '../assets/window.svg'   // make sure this path matches
-const MM_TO_PX = 3.78                         // ~96 DPI
+// Import the SVG file as a raw string
+import windowSvgRaw from '../assets/window.svg?raw'
+
+const MM_TO_PX = 3.78
 
 const WindowPreview = React.forwardRef(({ widthMm, heightMm }, ref) => {
+  // compute pixel size
   const w = widthMm * MM_TO_PX
   const h = heightMm * MM_TO_PX
+
+  // inject width/height into the SVG's root element
+  // and strip any hard-coded width/height/viewBox so it scales
+  const innerSvg = windowSvgRaw
+    // remove existing width/height attributes
+    .replace(/(width|height)="[^"]*"/g, '')
+    // ensure a viewBox exists so it scales responsively
+    .replace(
+      /<svg([^>]*)>/,
+      `<svg$1 width="${w}" height="${h}" preserveAspectRatio="none">`
+    )
 
   return (
     <div
@@ -13,12 +27,12 @@ const WindowPreview = React.forwardRef(({ widthMm, heightMm }, ref) => {
       style={{
         width: `${w}px`,
         height: `${h}px`,
-        border: '1px solid #ccc',
         overflow: 'hidden',
+        border: '1px solid #ccc',
       }}
-    >
-      <WindowSvg width={w} height={h} />
-    </div>
+      // dangerouslySetInnerHTML inlines the SVG markup directly
+      dangerouslySetInnerHTML={{ __html: innerSvg }}
+    />
   )
 })
 
