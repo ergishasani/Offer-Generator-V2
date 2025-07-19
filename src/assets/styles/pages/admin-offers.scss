@@ -1,3 +1,5 @@
+
+
 @use 'sass:color';
 @use '../variables' as v;
 
@@ -34,6 +36,26 @@
         &:hover {
           background: color.adjust(v.$accent, $lightness: -10%);
         }
+      }
+    }
+  }
+}
+.admin-offers-page {
+  table {
+    width: 100%;
+    /* existing styles… */
+
+    td.actions-cell {
+      button {
+        margin-right: 0.5rem;
+      }
+      .delete-btn {
+        background: #e26161;
+        color: #fff;
+        border: none;
+      }
+      .delete-btn:hover {
+        background: #c94c4c;
       }
     }
   }

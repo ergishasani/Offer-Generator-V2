@@ -8,7 +8,8 @@ import {
   query,
   orderBy,
   doc,
-  updateDoc
+  updateDoc,
+  deleteDoc            // ← import deleteDoc
 } from 'firebase/firestore'
 import { getFunctions, httpsCallable } from 'firebase/functions'
 import { db } from '../services/firebase'
@@ -35,18 +36,23 @@ export default function AdminOffersPage() {
   }, [user])
 
   const handleSendEmail = async offer => {
-    // call Cloud Function
     const functions = getFunctions()
     const sendOffer = httpsCallable(functions, 'sendOfferEmail')
     await sendOffer({ offerId: offer.id, uid: user.uid })
-    // update local Firestore record status & sentAt
     const ref = doc(db, 'users', user.uid, 'offers', offer.id)
     const sentAt = new Date().toISOString()
     await updateDoc(ref, { status: 'sent', sentAt })
-    // refresh list
     setOffers(offers.map(o =>
       o.id === offer.id ? { ...o, status: 'sent', sentAt } : o
     ))
+  }
+
+  // ← new delete handler
+  const handleDelete = async offerId => {
+    if (!window.confirm('Are you sure you want to delete this offer?')) return
+    const ref = doc(db, 'users', user.uid, 'offers', offerId)
+    await deleteDoc(ref)
+    setOffers(offers.filter(o => o.id !== offerId))
   }
 
   if (loading) return <div>Loading offer history…</div>
@@ -89,7 +95,7 @@ export default function AdminOffersPage() {
                     new Date(o.viewedAt).toLocaleTimeString()
                   : '—'}
               </td>
-              <td>
+              <td className="actions-cell">
                 <button
                   onClick={() => nav('/offer', { state: { offerId: o.id } })}
                 >
@@ -103,6 +109,13 @@ export default function AdminOffersPage() {
                     Send Email
                   </button>
                 )}
+                {/* ← your new delete button */}
+                <button
+                  className="delete-btn"
+                  onClick={() => handleDelete(o.id)}
+                >
+                  Delete
+                </button>
               </td>
             </tr>
           ))}
@@ -111,3 +124,4 @@ export default function AdminOffersPage() {
     </div>
   )
 }
+  

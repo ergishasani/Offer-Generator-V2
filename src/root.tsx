@@ -5,14 +5,15 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import LoginPage from './pages/LoginPage'
 import SignupPage from './pages/SignupPage'
 import ProfilePage from './pages/ProfilePage'
-import DashboardPage from './pages/DashboardPage'
+
 import ClientListPage from './pages/ClientListPage'
 import ClientEditPage from './pages/ClientEditPage'
 import OfferFormPage from './pages/OfferFormPage'
 import ProductListPage from './pages/ProductListPage'
 import ProductEditPage from './pages/ProductEditPage'
 import AdminOffersPage from './pages/AdminOffersPage'
-import PublicOfferPage from './pages/PublicOfferPage'   // ← import public viewer
+import PublicOfferPage from './pages/PublicOfferPage'
+import DashboardPage from './pages/DashboardPage'
 
 import ProtectedRoute from './components/ProtectedRoute'
 import ProtectedLayout from './components/ProtectedLayout'
@@ -23,19 +24,9 @@ export default function App() {
       {/* Public */}
       <Route path="/login" element={<LoginPage />} />
       <Route path="/signup" element={<SignupPage />} />
-      <Route path="/view/:offerId" element={<PublicOfferPage />} />  {/* public PDF viewer */}
+      <Route path="/view/:offerId" element={<PublicOfferPage />} />
 
       {/* Protected */}
-      <Route
-        path="/profile"
-        element={
-          <ProtectedRoute>
-            <ProtectedLayout>
-              <ProfilePage />
-            </ProtectedLayout>
-          </ProtectedRoute>
-        }
-      />
       <Route
         path="/dashboard"
         element={
@@ -46,6 +37,18 @@ export default function App() {
           </ProtectedRoute>
         }
       />
+
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <ProtectedLayout>
+              <ProfilePage />
+            </ProtectedLayout>
+          </ProtectedRoute>
+        }
+      />
+
       <Route
         path="/clients"
         element={
@@ -66,6 +69,7 @@ export default function App() {
           </ProtectedRoute>
         }
       />
+
       <Route
         path="/offer"
         element={
@@ -76,6 +80,7 @@ export default function App() {
           </ProtectedRoute>
         }
       />
+
       <Route
         path="/products"
         element={
@@ -96,6 +101,7 @@ export default function App() {
           </ProtectedRoute>
         }
       />
+
       <Route
         path="/admin/offers"
         element={
