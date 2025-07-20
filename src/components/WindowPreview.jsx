@@ -1,43 +1,39 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import WindowPreview from './WindowPreview';
-import { WINDOW_TYPES } from '../constants/windowTypes';
-import '../assets/styles/components/new-product-modal.scss';
+// src/components/WindowPreview.jsx
+import React from 'react'
+// Import the SVG file as a raw string
+import windowSvgRaw from '../assets/window.svg?raw'
 
-export default function NewProductModal({ onClose, onSelect }) {
-  return ReactDOM.createPortal(
-    <div className="modal-overlay">
-      <div className="modal-content">
-        <button
-          className="modal-close"
-          onClick={onClose}
-        >
-          ×
-        </button>
+const MM_TO_PX = 3.78
 
-        <h2>Select a Window Design</h2>
-        <div className="design-grid">
-          {WINDOW_TYPES
-            .filter(w => w.id.startsWith('design'))
-            .map(w => (
-              <div
-                key={w.id}
-                className="design-card"
-                onClick={() => onSelect(w.id)}
-              >
-                <WindowPreview
-                  type={w.id}
-                  widthMm={400}
-                  heightMm={400}
-                />
-                <div className="design-label">
-                  {w.label}
-                </div>
-              </div>
-            ))}
-        </div>
-      </div>
-    </div>,
-    document.body
-  );
-}
+const WindowPreview = React.forwardRef(({ widthMm, heightMm }, ref) => {
+  // compute pixel size
+  const w = widthMm * MM_TO_PX
+  const h = heightMm * MM_TO_PX
+
+  // inject width/height into the SVG's root element
+  // and strip any hard-coded width/height/viewBox so it scales
+  const innerSvg = windowSvgRaw
+    // remove existing width/height attributes
+    .replace(/(width|height)="[^"]*"/g, '')
+    // ensure a viewBox exists so it scales responsively
+    .replace(
+      /<svg([^>]*)>/,
+      `<svg$1 width="${w}" height="${h}" preserveAspectRatio="none">`
+    )
+
+  return (
+    <div
+      ref={ref}
+      style={{
+        width: `${w}px`,
+        height: `${h}px`,
+        overflow: 'hidden',
+        border: '1px solid #ccc',
+      }}
+      // dangerouslySetInnerHTML inlines the SVG markup directly
+      dangerouslySetInnerHTML={{ __html: innerSvg }}
+    />
+  )
+})
+
+export default WindowPreview

@@ -2,7 +2,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import WindowPreview from './WindowPreview'
-import { WINDOW_TYPES } from '../constants/windowTypes'
+import { WINDOW_TYPES } from '../constants/windowTypes.js'
 import '../assets/styles/components/new-product-modal.scss'
 
 export default function NewProductModal({ onClose, onSelect }) {
