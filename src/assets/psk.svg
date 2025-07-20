@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="500" viewBox="0 0 400 500">
+  <defs>
+    <!-- Glass gradient -->
+    <linearGradient id="glassGrad" gradientUnits="userSpaceOnUse" x1="0" y1="24" x2="0" y2="476">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#A2D3F5"/>
+    </linearGradient>
+    <!-- Bevel filter -->
+    <filter id="bevel" x="0" y="0" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="1" result="blur"/>
+      <feSpecularLighting in="blur" surfaceScale="1" specularConstant="0.5" specularExponent="15" lighting-color="#ffffff" result="specOut">
+        <fePointLight x="-5000" y="-10000" z="20000"/>
+      </feSpecularLighting>
+      <feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut"/>
+      <feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="1" k2="0" k3="1" k4="0"/>
+    </filter>
+    <!-- Drop shadow -->
+    <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000000" flood-opacity="0.2"/>
+    </filter>
+    <!-- Ambient‑occlusion shading -->
+    <radialGradient id="aoGrad" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0.1"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Outer frames with drop-shadow -->
+  <g fill="none" stroke-linejoin="miter" filter="url(#dropShadow)">
+    <rect x="20" y="20" width="360" height="460" stroke="#888888" stroke-width="2"/>
+    <rect x="24" y="24" width="352" height="452" stroke="#888888" stroke-width="2"/>
+  </g>
+
+  <!-- Inner sash frames -->
+  <rect x="24" y="24" width="176" height="452" fill="none" stroke="#CCCCCC" stroke-width="2"/>
+  <rect x="200" y="24" width="176" height="452" fill="none" stroke="#CCCCCC" stroke-width="2"/>
+
+  <!-- Glass panes -->
+  <rect x="26" y="26" width="172" height="448" fill="url(#glassGrad)" filter="url(#bevel)"/>
+  <rect x="202" y="26" width="172" height="448" fill="url(#glassGrad)" filter="url(#bevel)"/>
+
+  <!-- Sill track with drop-shadow -->
+  <g filter="url(#dropShadow)">
+    <rect x="20" y="480" width="360" height="20" fill="#777777"/>
+    <rect x="20" y="484" width="360" height="4" fill="#666666"/>
+  </g>
+
+  <!-- Flush recessed handle on PSK sash -->
+  <rect x="194" y="260" width="8" height="40" rx="2" fill="#555555"/>
+
+  <!-- Parallel‑slide arrow (points left) -->
+  <polygon points="112,460 92,470 92,450" fill="#555555"/>
+
+  <!-- Tilt runners on PSK sash -->
+  <g fill="#555555">
+    <circle cx="112" cy="26" r="5"/>
+    <circle cx="112" cy="476" r="5"/>
+  </g>
+
+  <!-- Weather‑stripping grooves -->
+  <line x1="26" y1="26" x2="374" y2="26" stroke="#999999" stroke-width="1" stroke-dasharray="2,2"/>
+  <line x1="26" y1="476" x2="374" y2="476" stroke="#999999" stroke-width="1" stroke-dasharray="2,2"/>
+  <line x1="26" y1="26" x2="26" y2="476" stroke="#999999" stroke-width="1" stroke-dasharray="2,2"/>
+  <line x1="374" y1="26" x2="374" y2="476" stroke="#999999" stroke-width="1" stroke-dasharray="2,2"/>
+  <line x1="200" y1="26" x2="200" y2="476" stroke="#999999" stroke-width="1" stroke-dasharray="2,2"/>
+
+  <!-- Glazing beads -->
+  <rect x="24" y="24" width="176" height="4" fill="#BBBBBB"/>
+  <rect x="24" y="472" width="176" height="4" fill="#BBBBBB"/>
+  <rect x="24" y="24" width="4" height="452" fill="#BBBBBB"/>
+  <rect x="196" y="24" width="4" height="452" fill="#BBBBBB"/>
+  <rect x="200" y="24" width="176" height="4" fill="#BBBBBB"/>
+  <rect x="200" y="472" width="176" height="4" fill="#BBBBBB"/>
+  <rect x="200" y="24" width="4" height="452" fill="#BBBBBB"/>
+  <rect x="372" y="24" width="4" height="452" fill="#BBBBBB"/>
+
+  <!-- Ambient‑occlusion shading in corners -->
+  <ellipse cx="24" cy="24"   rx="30" ry="30" fill="url(#aoGrad)"/>
+  <ellipse cx="376" cy="24"  rx="30" ry="30" fill="url(#aoGrad)"/>
+  <ellipse cx="24" cy="476"  rx="30" ry="30" fill="url(#aoGrad)"/>
+  <ellipse cx="376" cy="476" rx="30" ry="30" fill="url(#aoGrad)"/>
+</svg>

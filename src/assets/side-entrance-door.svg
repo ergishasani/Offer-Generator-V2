@@ -1,32 +1,24 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="400" height="500" viewBox="0 0 400 500">
   <defs>
-    <!-- Glass gradient -->
-    <linearGradient id="glassGrad" gradientUnits="userSpaceOnUse" x1="0" y1="44" x2="0" y2="456">
+    <linearGradient id="glassGrad" x1="0" y1="44" x2="0" y2="456">
       <stop offset="0%" stop-color="#FFFFFF"/>
       <stop offset="100%" stop-color="#A2D3F5"/>
     </linearGradient>
-    <!-- Diagonal muntin pattern -->
-    <pattern id="muntinPattern" patternUnits="userSpaceOnUse" width="20" height="20">
-      <path d="M0,20 L20,0" stroke="#DDDDDD" stroke-width="1"/>
-    </pattern>
-    <!-- Ambient‑occlusion radial gradient -->
-    <radialGradient id="aoGrad" cx="0.5" cy="0.5" r="0.5">
-      <stop offset="0%" stop-color="#000000" stop-opacity="0"/>
-      <stop offset="100%" stop-color="#000000" stop-opacity="0.1"/>
-    </radialGradient>
-    <!-- Drop shadow -->
-    <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000000" flood-opacity="0.2"/>
-    </filter>
-    <!-- Bevel for glass -->
     <filter id="bevel" x="0" y="0" width="200%" height="200%">
       <feGaussianBlur in="SourceAlpha" stdDeviation="1" result="blur"/>
-      <feSpecularLighting in="blur" surfaceScale="1" specularConstant="0.5" specularExponent="20" lighting-color="#ffffff" result="specOut">
+      <feSpecularLighting in="blur" surfaceScale="1" specularConstant="0.5" specularExponent="15" lighting-color="#ffffff" result="specOut">
         <fePointLight x="-5000" y="-10000" z="20000"/>
       </feSpecularLighting>
       <feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut"/>
       <feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="1" k2="0" k3="1" k4="0"/>
     </filter>
+    <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000000" flood-opacity="0.2"/>
+    </filter>
+    <radialGradient id="aoGrad" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0.1"/>
+    </radialGradient>
   </defs>
 
   <!-- Frames with drop-shadow -->
@@ -39,8 +31,8 @@
   <!-- Glass pane -->
   <rect x="44" y="44" width="312" height="412" fill="url(#glassGrad)" filter="url(#bevel)"/>
 
-  <!-- Muntin overlay -->
-  <rect x="44" y="44" width="312" height="412" fill="url(#muntinPattern)"/>
+  <!-- Single diagonal muntin (mirrored) -->
+  <line x1="356" y1="44" x2="44" y2="456" stroke="#DDDDDD" stroke-width="1"/>
 
   <!-- Glazing beads -->
   <rect x="44" y="44" width="312" height="2" fill="#BBBBBB"/>
@@ -54,19 +46,20 @@
   <line x1="46" y1="46" x2="46" y2="456" stroke="#999999" stroke-width="1" stroke-dasharray="2,2"/>
   <line x1="354" y1="46" x2="354" y2="456" stroke="#999999" stroke-width="1" stroke-dasharray="2,2"/>
 
-  <!-- Ambient‑occlusion shading in all corners -->
+  <!-- Ambient‑occlusion shading -->
   <ellipse cx="44" cy="44"   rx="50" ry="50" fill="url(#aoGrad)"/>
   <ellipse cx="356" cy="44"  rx="50" ry="50" fill="url(#aoGrad)"/>
   <ellipse cx="44" cy="456"  rx="50" ry="50" fill="url(#aoGrad)"/>
   <ellipse cx="356" cy="456" rx="50" ry="50" fill="url(#aoGrad)"/>
 
-  <!-- Butt hinges -->
+  <!-- Left-side butt hinges -->
   <g fill="#555555">
-    <rect x="30" y="100" width="6" height="20" rx="1"/>
-    <rect x="30" y="220" width="6" height="20" rx="1"/>
-    <rect x="30" y="340" width="6" height="20" rx="1"/>
+    <rect x="20" y="100" width="6" height="20" rx="1"/>
+    <rect x="20" y="200" width="6" height="20" rx="1"/>
+    <rect x="20" y="300" width="6" height="20" rx="1"/>
   </g>
 
-  <!-- Sleek lever handle -->
+  <!-- Lever handle and lock on right -->
   <path d="M360,260 h20 a4,4 0 0 1 4,4 v8 a4,4 0 0 1 -4,4 h-20 z" fill="#555555"/>
+  <circle cx="370" cy="250" r="4" fill="#555555"/>
 </svg>

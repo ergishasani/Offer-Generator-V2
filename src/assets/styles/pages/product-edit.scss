@@ -1,133 +1,173 @@
-/* src/assets/styles/pages/product-edit.scss */
+// src/assets/styles/pages/product-edit.scss
 
-/*--------------------------------------------------------------
-# Variables
---------------------------------------------------------------*/
-$max-width           : 600px;
-$pad                 : 2rem;
-$bg-color            : #fff;
-$border-radius       : 0.5rem;
-$border-color        : #ddd;
-$focus-color         : #2684ff;
-$primary-btn-bg      : #28a745;
-$secondary-btn-bg    : #6c757d;
-$btn-hover-opacity   : 0.9;
-$error-color         : #e53e3e;
-$text-color          : #333;
-$font-family         : 'Arial', sans-serif;
-
-/*--------------------------------------------------------------
-# Product Edit Page
---------------------------------------------------------------*/
 .product-edit-page {
-  max-width: $max-width;
-  margin: $pad auto;
-  padding: $pad;
-  background: $bg-color;
-  border-radius: $border-radius;
-  font-family: $font-family;
-  color: $text-color;
+  padding: 1.5rem;
+  font-family: sans-serif;
+  color: #333;
 
-  h1 {
-    font-size: 1.75rem;
-    text-align: center;
-    margin-bottom: 1.5rem;
-  }
-
-  .error {
-    color: $error-color;
-    font-size: 0.875rem;
-    margin-top: 0.25rem;
-  }
-
-  .product-edit-form {
+  &.with-preview {
     display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+    gap: 2rem;
 
-    label {
+    // stack on small screens
+    @media (max-width: 768px) {
+      flex-direction: column;
+    }
+  }
+
+  // ► SHAPE PICKER (only on "new" before form shows)
+  .shape-picker {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .shape-option {
+    cursor: pointer;
+    border: 2px solid transparent;
+    border-radius: 6px;
+    padding: 0.75rem;
+    text-align: center;
+    background: #fafafa;
+    transition: border-color 0.2s, box-shadow 0.2s;
+
+    &:hover {
+      border-color: #007bff;
+      box-shadow: 0 2px 8px rgba(0, 123, 255, 0.2);
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+
+    span {
+      display: block;
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+    }
+  }
+
+  // ► FORM COLUMN
+  .form-column {
+    flex: 1;
+    max-width: 420px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 1.5rem;
+
+    h1 {
+      margin-top: 0;
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+    }
+
+    .error {
+      color: #c00;
+      margin-bottom: 1rem;
+    }
+
+    form {
       display: flex;
       flex-direction: column;
-      font-weight: 500;
-
-      .label-text {
-        margin-bottom: 0.5rem;
-      }
-
-      input,
-      textarea,
-      select {
-        margin-top: 0.25rem;
-        padding: 0.75rem 1rem;
-        border: 1px solid $border-color;
-        border-radius: 0.25rem;
-        font-size: 1rem;
-        transition: border-color 0.2s, box-shadow 0.2s;
-
-        &:focus {
-          outline: none;
-          border-color: $focus-color;
-          box-shadow: 0 0 0 3px rgba($focus-color, 0.2);
-        }
-      }
-
-      textarea {
-        resize: vertical;
-        min-height: 100px;
-      }
-    }
-
-    .buttons {
-      display: flex;
-      justify-content: flex-end;
       gap: 1rem;
-      margin-top: 1rem;
 
-      button {
-        padding: 0.75rem 1.5rem;
-        border: none;
-        border-radius: $border-radius / 2;
-        cursor: pointer;
+      label {
+        display: flex;
+        flex-direction: column;
+        font-size: 0.95rem;
+
+        .required {
+          color: #c00;
+          margin-left: 0.25rem;
+        }
+
+        input,
+        select,
+        textarea {
+          margin-top: 0.25rem;
+          padding: 0.5rem;
+          border: 1px solid #cbd5e0;
+          border-radius: 4px;
+          font-size: 0.95rem;
+          width: 100%;
+          box-sizing: border-box;
+        }
+
+        textarea {
+          resize: vertical;
+        }
+      }
+
+      .two-column {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+
+      .price-summary {
+        margin: 1rem 0;
         font-size: 1rem;
-        transition: opacity 0.2s, transform 0.1s;
+        strong {
+          color: #007bff;
+        }
+      }
 
-        &:hover {
-          opacity: $btn-hover-opacity;
-          transform: translateY(-1px);
+      .buttons {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1rem;
+
+        button {
+          flex: 1;
+          padding: 0.6rem 1rem;
+          font-size: 0.95rem;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
         }
 
-        &.btn-primary {
-          background: $primary-btn-bg;
+        button[type='submit'] {
+          background-color: #007bff;
           color: #fff;
         }
 
-        &.btn-secondary {
-          background: $secondary-btn-bg;
-          color: #fff;
+        button[type='button'] {
+          background-color: #f0f0f0;
+          color: #333;
         }
       }
     }
   }
 
-  /*------------------------------------------------------------
-  ## Responsive
-  ------------------------------------------------------------*/
-  @media (max-width: 480px) {
-    padding: 1rem;
+  // ► PREVIEW COLUMN
+  .preview-column {
+    flex: 1;
+    max-width: 500px;
 
-    .product-edit-form {
-      gap: 1rem;
+    h2 {
+      margin-top: 0;
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+    }
 
-      .buttons {
-        flex-direction: column-reverse;
-        gap: 0.75rem;
+    .svg-preview-container {
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 1rem;
+      background: #fafafa;
+      text-align: center;
 
-        button {
-          width: 100%;
-        }
+      img {
+        max-width: 100%;
+        height: auto;
+        display: inline-block;
+        border-radius: 4px;
       }
     }
   }
 }
-
-

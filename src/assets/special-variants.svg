@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="500" viewBox="0 0 400 500">
+  <defs>
+    <linearGradient id="glassGrad" gradientUnits="userSpaceOnUse" x1="0" y1="44" x2="0" y2="456">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#A2D3F5"/>
+    </linearGradient>
+    <pattern id="muntinPattern" patternUnits="userSpaceOnUse" width="20" height="20">
+      <path d="M0,20 L20,0" stroke="#DDDDDD" stroke-width="1"/>
+    </pattern>
+    <filter id="bevel" x="0" y="0" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="1" result="blur"/>
+      <feSpecularLighting in="blur" surfaceScale="1" specularConstant="0.5" specularExponent="15" lighting-color="#ffffff" result="specOut">
+        <fePointLight x="-5000" y="-10000" z="20000"/>
+      </feSpecularLighting>
+      <feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut"/>
+      <feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="1" k2="0" k3="1" k4="0"/>
+    </filter>
+    <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000000" flood-opacity="0.2"/>
+    </filter>
+    <radialGradient id="aoGrad" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0.1"/>
+    </radialGradient>
+  </defs>
+  <g filter="url(#dropShadow)" fill="none">
+    <polygon points="20,480 380,480 360,260 200,20 40,260" stroke="#888888" stroke-width="2"/>
+    <polygon points="26,474 374,474 354,260 200,26 46,260" stroke="#888888" stroke-width="2"/>
+  </g>
+  <polygon points="40,460 360,460 340,260 200,40 60,260" fill="none" stroke="#CCCCCC" stroke-width="2"/>
+  <polygon points="44,456 356,456 336,260 200,44 64,260" fill="url(#glassGrad)" filter="url(#bevel)"/>
+  <polygon points="44,456 356,456 336,260 200,44 64,260" fill="url(#muntinPattern)"/>
+  <polygon points="44,456 356,456 336,260 200,44 64,260" fill="none" stroke="#BBBBBB" stroke-width="2"/>
+  <path d="M52,450 L348,450 L328,260 L200,52 L72,260 Z" fill="none" stroke="#999999" stroke-width="1" stroke-dasharray="2,2"/>
+  <ellipse cx="40" cy="460" r="30" fill="url(#aoGrad)"/>
+  <ellipse cx="360" cy="460" r="30" fill="url(#aoGrad)"/>
+  <ellipse cx="200" cy="40" r="30" fill="url(#aoGrad)"/>
+  <ellipse cx="60" cy="260" r="30" fill="url(#aoGrad)"/>
+  <ellipse cx="340" cy="260" r="30" fill="url(#aoGrad)"/>
+  <g fill="#555555">
+    <rect x="368" y="360" width="6" height="20" rx="1"/>
+    <rect x="365" y="300" width="6" height="20" rx="1"/>
+    <rect x="362" y="240" width="6" height="20" rx="1"/>
+  </g>
+  <path d="M60,300 h20 a4,4 0 0 1 4,4 v8 a4,4 0 0 1 -4,4 h-20 z" fill="#555555"/>
+  <circle cx="70" cy="290" r="4" fill="#555555"/>
+</svg>
