@@ -68,6 +68,7 @@ export default function ProductListPage() {
       >
         + Add My Product
       </button>
+
       <table>
         <thead>
           <tr>
@@ -80,32 +81,42 @@ export default function ProductListPage() {
           </tr>
         </thead>
         <tbody>
-          {products.map((p, i) => (
-            <tr key={`${p.source}-${p.id}`}>
-              <td>{p.source === 'global' ? 'Global' : 'Mine'}</td>
-              <td>{p.name}</td>
-              <td>{p.unit || 'pcs'}</td>
-              <td>{p.basePrice.toFixed(2)}</td>
-              <td>{(p.vatRate * 100).toFixed(0)}%</td>
-              <td>
-                <button
-                  onClick={() =>
-                    nav(`/products/${p.source}/${p.id}`)
-                  }
-                >
-                  Edit
-                </button>
-                {p.source === 'user' && (
+          {products.map((p) => {
+            // ensure we have numbers to call toFixed on
+            const price = typeof p.basePrice === 'number' 
+              ? p.basePrice 
+              : Number(p.basePrice) || 0
+            const vatRate = typeof p.vatRate === 'number' 
+              ? p.vatRate 
+              : Number(p.vatRate) || 0
+
+            return (
+              <tr key={`${p.source}-${p.id}`}>
+                <td>{p.source === 'global' ? 'Global' : 'Mine'}</td>
+                <td>{p.name}</td>
+                <td>{p.unit || 'pcs'}</td>
+                <td>{price.toFixed(2)}</td>
+                <td>{(vatRate * 100).toFixed(0)}%</td>
+                <td>
                   <button
-                    className="delete"
-                    onClick={() => handleDelete(p.source, p.id)}
+                    onClick={() =>
+                      nav(`/products/${p.source}/${p.id}`)
+                    }
                   >
-                    Delete
+                    Edit
                   </button>
-                )}
-              </td>
-            </tr>
-          ))}
+                  {p.source === 'user' && (
+                    <button
+                      className="delete"
+                      onClick={() => handleDelete(p.source, p.id)}
+                    >
+                      Delete
+                    </button>
+                  )}
+                </td>
+              </tr>
+            )
+          })}
         </tbody>
       </table>
     </div>
