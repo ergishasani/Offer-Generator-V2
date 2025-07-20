@@ -1,0 +1,52 @@
+/* src/assets/styles/components/new-product-modal.scss */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 1000;
+}
+
+.modal-content {
+  background: #fff;
+  border-radius: 6px;
+  padding: 24px;
+  max-width: 600px;
+  margin: 0 auto;
+  position: relative;
+  top: 10%;
+}
+
+.modal-close {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+}
+
+.design-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.design-card {
+  cursor: pointer;
+  text-align: center;
+  padding: 8px;
+  border: 1px solid #eee;
+  border-radius: 4px;
+  transition: box-shadow .2s;
+}
+.design-card:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.design-label {
+  margin-top: 8px;
+  font-size: 14px;
+}

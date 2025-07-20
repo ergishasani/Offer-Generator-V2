@@ -1,63 +1,71 @@
-// src/pages/ProductListPage.jsx
-import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import React, { useEffect, useState } from 'react';
+import { useNavigate }                from 'react-router-dom';
 import {
   collection,
   getDocs,
   query,
   deleteDoc,
   doc
-} from 'firebase/firestore'
-import { db } from '../services/firebase'
-import { useAuth } from '../contexts/AuthContext'
-import '../assets/styles/pages/product-list.scss'
+} from 'firebase/firestore';
+import { db }                         from '../services/firebase';
+import { useAuth }                    from '../contexts/AuthContext';
+import '../assets/styles/pages/product-list.scss';
 
 export default function ProductListPage() {
-  const { user } = useAuth()
-  const [products, setProducts] = useState([])
-  const [loading, setLoading] = useState(true)
-  const nav = useNavigate()
+  const { user } = useAuth();
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading]   = useState(true);
+  const nav = useNavigate();
 
   useEffect(() => {
-    if (!user) return
-    ;(async () => {
-      // fetch global
-      const globalSnap = await getDocs(query(collection(db, 'products')))
+    if (!user) return;
+    (async () => {
+      // fetch global products
+      const globalSnap = await getDocs(query(collection(db, 'products')));
       const global = globalSnap.docs.map(d => ({
         id: d.id,
         source: 'global',
         ...d.data()
-      }))
-      // fetch user
+      }));
+
+      // fetch user-specific products
       const userSnap = await getDocs(
         query(collection(db, 'users', user.uid, 'products'))
-      )
+      );
       const userList = userSnap.docs.map(d => ({
         id: d.id,
         source: 'user',
         ...d.data()
-      }))
-      setProducts([...global, ...userList])
-      setLoading(false)
-    })()
-  }, [user])
+      }));
+
+      setProducts([...global, ...userList]);
+      setLoading(false);
+    })();
+  }, [user]);
 
   const handleDelete = async (source, id) => {
     if (
       !window.confirm(
         `Delete this ${source === 'global' ? 'global' : 'your'} product?`
       )
-    )
-      return
+    ) return;
+
     const path =
       source === 'global'
         ? ['products', id]
-        : ['users', user.uid, 'products', id]
-    await deleteDoc(doc(db, ...path))
-    setProducts(p => p.filter(x => !(x.source === source && x.id === id)))
-  }
+        : ['users', user.uid, 'products', id];
 
-  if (loading) return <div className="product-list-page">Loading…</div>
+    await deleteDoc(doc(db, ...path));
+    setProducts(p => p.filter(x => !(x.source === source && x.id === id)));
+  };
+
+  if (loading) {
+    return (
+      <div className="product-list-page">
+        <p>Loading…</p>
+      </div>
+    );
+  }
 
   return (
     <div className="product-list-page">
@@ -75,12 +83,14 @@ export default function ProductListPage() {
             <th>Scope</th>
             <th>Name</th>
             <th>Unit</th>
-            <th>Price</th>
+            <th>Net Price</th>
             <th>VAT</th>
+            <th>Gross Price</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
+
           {products.map((p) => {
             // ensure we have numbers to call toFixed on
             const price = typeof p.basePrice === 'number' 
@@ -89,6 +99,12 @@ export default function ProductListPage() {
             const vatRate = typeof p.vatRate === 'number' 
               ? p.vatRate 
               : Number(p.vatRate) || 0
+
+          {products.map(p => {
+            const net   = p.netPrice   != null ? Number(p.netPrice)   : null;
+            const vat   = p.vat        != null ? Number(p.vat)        : null;
+            const gross = p.grossPrice != null ? Number(p.grossPrice) : null;
+
 
             return (
               <tr key={`${p.source}-${p.id}`}>
@@ -103,6 +119,11 @@ export default function ProductListPage() {
                       nav(`/products/${p.source}/${p.id}`)
                     }
                   >
+                <td>{net   !== null ? net.toFixed(2)   : '-'}</td>
+                <td>{vat   !== null ? `${vat.toFixed(0)}%` : '-'}</td>
+                <td>{gross !== null ? gross.toFixed(2) : '-'}</td>
+                <td>
+                  <button onClick={() => nav(`/products/${p.source}/${p.id}`)}>
                     Edit
                   </button>
                   {p.source === 'user' && (
@@ -116,9 +137,10 @@ export default function ProductListPage() {
                 </td>
               </tr>
             )
+            );
           })}
         </tbody>
       </table>
     </div>
-  )
+  );
 }
