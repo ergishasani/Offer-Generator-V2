@@ -1,6 +1,7 @@
 // src/components/ProductRow.jsx
 import React, { useEffect, useRef } from 'react'
 import WindowPreview from './WindowPreview'
+import '../assets/styles/components/product-row.scss'
 
 export default function ProductRow({
   index,
@@ -12,12 +13,11 @@ export default function ProductRow({
 }) {
   const previewRef = useRef(null)
 
-  // Register this preview div so parent can snapshot it
+  // register for PDF snapshot
   useEffect(() => {
     registerPreview(previewRef)
   }, [registerPreview])
 
-  // When the user selects a product from the dropdown
   const handleSelect = e => {
     const prod = products.find(p => p.id === e.target.value)
     if (prod) {
@@ -31,20 +31,10 @@ export default function ProductRow({
         heightMm: prod.heightMm || 0
       })
     } else {
-      // cleared selection
-      onChange({
-        ...item,
-        id: '',
-        name: '',
-        basePrice: 0,
-        vatRate: 0,
-        widthMm: 0,
-        heightMm: 0
-      })
+      onChange({ ...item, id:'', name:'', basePrice:0, vatRate:0, widthMm:0, heightMm:0 })
     }
   }
 
-  // Handle changes to the other numeric/text fields
   const handleField = e => {
     const { name, value } = e.target
     onChange({
@@ -52,46 +42,46 @@ export default function ProductRow({
       [name]:
         name === 'quantity'
           ? parseInt(value, 10)
-          : name === 'basePrice' ||
-            name === 'vatRate' ||
-            name === 'widthMm' ||
-            name === 'heightMm'
+          : ['basePrice','vatRate','widthMm','heightMm'].includes(name)
           ? parseFloat(value)
           : value
     })
   }
 
   return (
-    <tr>
-      <td>
+    <tr className="product-row">
+      {/* delete */}
+      <td className="cell cell-action">
         <button
           type="button"
           onClick={onRemove}
-          style={{
-            border: 'none',
-            background: 'transparent',
-            cursor: 'pointer',
-            fontSize: '1.2rem',
-            color: '#c00'
-          }}
+          className="delete-btn"
           title="Remove this line"
         >
           🗑
         </button>
       </td>
-      <td>
-        <select value={item.id || ''} onChange={handleSelect}>
+
+      {/* product select */}
+      <td className="cell cell-product">
+        <select
+          className="product-select"
+          value={item.id || ''}
+          onChange={handleSelect}
+        >
           <option value="">— Select product —</option>
           {products.map(p => (
             <option key={`${p.source}-${p.id}`} value={p.id}>
-              {p.source === 'global' ? '[G] ' : '[U] '}
-              {p.name}
+              {p.source === 'global' ? '[G]' : '[U]'} {p.name}
             </option>
           ))}
         </select>
       </td>
-      <td>
+
+      {/* quantity */}
+      <td className="cell cell-quantity">
         <input
+          className="row-input quantity-input"
           type="number"
           name="quantity"
           value={item.quantity}
@@ -99,28 +89,37 @@ export default function ProductRow({
           min="1"
         />
       </td>
-      <td>
+
+      {/* base price */}
+      <td className="cell cell-price">
         <input
+          className="row-input price-input"
           type="number"
           name="basePrice"
           value={item.basePrice}
           onChange={handleField}
           step="0.01"
-          placeholder="Net price"
+          placeholder="Net"
         />
       </td>
-      <td>
+
+      {/* vat rate */}
+      <td className="cell cell-vat">
         <input
+          className="row-input vat-input"
           type="number"
           name="vatRate"
           value={item.vatRate}
           onChange={handleField}
           step="0.01"
-          placeholder="e.g. 0.20"
+          placeholder="0.20"
         />
       </td>
-      <td>
+
+      {/* width */}
+      <td className="cell cell-width">
         <input
+          className="row-input dim-input"
           type="number"
           name="widthMm"
           value={item.widthMm}
@@ -128,8 +127,11 @@ export default function ProductRow({
           placeholder="mm"
         />
       </td>
-      <td>
+
+      {/* height */}
+      <td className="cell cell-height">
         <input
+          className="row-input dim-input"
           type="number"
           name="heightMm"
           value={item.heightMm}
@@ -137,12 +139,15 @@ export default function ProductRow({
           placeholder="mm"
         />
       </td>
-      <td>
-        <WindowPreview
-          ref={previewRef}
-          widthMm={item.widthMm}
-          heightMm={item.heightMm}
-        />
+
+      {/* preview */}
+      <td className="cell cell-preview">
+        <div className="preview-container" ref={previewRef}>
+          <WindowPreview
+            widthMm={item.widthMm}
+            heightMm={item.heightMm}
+          />
+        </div>
       </td>
     </tr>
   )

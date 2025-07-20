@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="520" viewBox="0 0 500 520">
+  <defs>
+    <linearGradient id="glassGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#A2D3F5"/>
+    </linearGradient>
+    <filter id="bevel" x="0" y="0" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="1" result="blur"/>
+      <feSpecularLighting in="blur" surfaceScale="1" specularConstant="0.5" specularExponent="15" lighting-color="#ffffff" result="specOut">
+        <fePointLight x="-5000" y="-10000" z="20000"/>
+      </feSpecularLighting>
+      <feComposite in="specOut" in2="SourceAlpha" operator="in" result="specOut"/>
+      <feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="1" k2="0" k3="1" k4="0"/>
+    </filter>
+    <filter id="dropShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000000" flood-opacity="0.2"/>
+    </filter>
+    <radialGradient id="aoGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0.1"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Outer frame -->
+  <rect x="10" y="10" width="480" height="480" fill="none" stroke="#888888" stroke-width="2"/>
+  <rect x="14" y="14" width="472" height="472" fill="none" stroke="#888888" stroke-width="2"/>
+
+  <!-- Inner sash frames -->
+  <rect x="16" y="16" width="230" height="468" fill="none" stroke="#CCCCCC" stroke-width="2"/>
+  <rect x="254" y="16" width="230" height="468" fill="none" stroke="#CCCCCC" stroke-width="2"/>
+
+  <!-- Meeting stile -->
+  <rect x="246" y="14" width="8" height="472" fill="#888888"/>
+
+  <!-- Glass panes -->
+  <rect x="18" y="18" width="226" height="464" fill="url(#glassGrad)" filter="url(#bevel)"/>
+  <rect x="256" y="18" width="226" height="464" fill="url(#glassGrad)" filter="url(#bevel)"/>
+
+  <!-- Threshold with drop-shadow -->
+  <g filter="url(#dropShadow)">
+    <rect x="10" y="490" width="480" height="20" fill="#777777"/>
+    <rect x="10" y="494" width="480" height="4" fill="#666666"/>
+  </g>
+
+  <!-- Weather-strip grooves -->
+  <line x1="14" y1="14" x2="490" y2="14" stroke="#999999" stroke-width="1" stroke-dasharray="2,2"/>
+  <line x1="14" y1="486" x2="490" y2="486" stroke="#999999" stroke-width="1" stroke-dasharray="2,2"/>
+  <line x1="14" y1="14" x2="14" y2="486" stroke="#999999" stroke-width="1" stroke-dasharray="2,2"/>
+  <line x1="490" y1="14" x2="490" y2="486" stroke="#999999" stroke-width="1" stroke-dasharray="2,2"/>
+
+  <!-- Glazing beads -->
+  <rect x="14" y="14" width="480" height="2" fill="#BBBBBB"/>
+  <rect x="14" y="486" width="480" height="2" fill="#BBBBBB"/>
+  <rect x="14" y="14" width="2" height="472" fill="#BBBBBB"/>
+  <rect x="492" y="14" width="2" height="472" fill="#BBBBBB"/>
+
+  <!-- Ambient-occlusion shading -->
+  <ellipse cx="16" cy="16" rx="40" ry="40" fill="url(#aoGrad)"/>
+  <ellipse cx="486" cy="16" rx="40" ry="40" fill="url(#aoGrad)"/>
+  <ellipse cx="16" cy="486" rx="40" ry="40" fill="url(#aoGrad)"/>
+  <ellipse cx="486" cy="486" rx="40" ry="40" fill="url(#aoGrad)"/>
+
+  <!-- Right operable leaf hinges -->
+  <g fill="#555555">
+    <rect x="484" y="80" width="6" height="20" rx="1"/>
+    <rect x="484" y="170" width="6" height="20" rx="1"/>
+    <rect x="484" y="260" width="6" height="20" rx="1"/>
+    <rect x="484" y="350" width="6" height="20" rx="1"/>
+  </g>
+
+  <!-- Lever handle & escutcheon -->
+  <path d="M460,280 h20 a4,4 0 0 1 4,4 v8 a4,4 0 0 1 -4,4 h-20 z" fill="#555555"/>
+</svg>

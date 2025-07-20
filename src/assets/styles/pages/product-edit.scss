@@ -1,133 +1,72 @@
-/* src/assets/styles/pages/product-edit.scss */
+.product_edit_page {
+  padding: 1rem;
 
-/*--------------------------------------------------------------
-# Variables
---------------------------------------------------------------*/
-$max-width           : 600px;
-$pad                 : 2rem;
-$bg-color            : #fff;
-$border-radius       : 0.5rem;
-$border-color        : #ddd;
-$focus-color         : #2684ff;
-$primary-btn-bg      : #28a745;
-$secondary-btn-bg    : #6c757d;
-$btn-hover-opacity   : 0.9;
-$error-color         : #e53e3e;
-$text-color          : #333;
-$font-family         : 'Arial', sans-serif;
-
-/*--------------------------------------------------------------
-# Product Edit Page
---------------------------------------------------------------*/
-.product-edit-page {
-  max-width: $max-width;
-  margin: $pad auto;
-  padding: $pad;
-  background: $bg-color;
-  border-radius: $border-radius;
-  font-family: $font-family;
-  color: $text-color;
-
-  h1 {
-    font-size: 1.75rem;
-    text-align: center;
-    margin-bottom: 1.5rem;
-  }
-
-  .error {
-    color: $error-color;
-    font-size: 0.875rem;
-    margin-top: 0.25rem;
-  }
-
-  .product-edit-form {
+  &.with_preview {
     display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
+    gap: 2rem;
+  }
 
-    label {
-      display: flex;
-      flex-direction: column;
-      font-weight: 500;
+  .shape_picker {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
 
-      .label-text {
-        margin-bottom: 0.5rem;
+    .shape_option {
+      cursor: pointer;
+      border: 2px solid transparent;
+      padding: 0.5rem;
+      text-align: center;
+      transition: border-color 0.2s;
+
+      &:hover {
+        border-color: #007bff;
       }
 
-      input,
-      textarea,
-      select {
-        margin-top: 0.25rem;
-        padding: 0.75rem 1rem;
-        border: 1px solid $border-color;
-        border-radius: 0.25rem;
-        font-size: 1rem;
-        transition: border-color 0.2s, box-shadow 0.2s;
-
-        &:focus {
-          outline: none;
-          border-color: $focus-color;
-          box-shadow: 0 0 0 3px rgba($focus-color, 0.2);
-        }
+      img {
+        max-width: 120px;
+        height: auto;
       }
 
-      textarea {
-        resize: vertical;
-        min-height: 100px;
-      }
-    }
-
-    .buttons {
-      display: flex;
-      justify-content: flex-end;
-      gap: 1rem;
-      margin-top: 1rem;
-
-      button {
-        padding: 0.75rem 1.5rem;
-        border: none;
-        border-radius: $border-radius / 2;
-        cursor: pointer;
-        font-size: 1rem;
-        transition: opacity 0.2s, transform 0.1s;
-
-        &:hover {
-          opacity: $btn-hover-opacity;
-          transform: translateY(-1px);
-        }
-
-        &.btn-primary {
-          background: $primary-btn-bg;
-          color: #fff;
-        }
-
-        &.btn-secondary {
-          background: $secondary-btn-bg;
-          color: #fff;
-        }
+      span {
+        display: block;
+        margin-top: 0.5rem;
       }
     }
   }
 
-  /*------------------------------------------------------------
-  ## Responsive
-  ------------------------------------------------------------*/
-  @media (max-width: 480px) {
-    padding: 1rem;
+  .form_column {
+    flex: 1;
+    max-width: 400px;
+  }
 
-    .product-edit-form {
-      gap: 1rem;
+  .preview_column {
+    flex: 1;
 
-      .buttons {
-        flex-direction: column-reverse;
-        gap: 0.75rem;
+    .svg_preview_container {
+      border: 1px solid #ddd;
+      padding: 1rem;
+      text-align: center;
 
-        button {
-          width: 100%;
-        }
+      img {
+        max-width: 100%;
+        height: auto;
       }
     }
+  }
+
+  .two_column {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .price_summary {
+    margin: 1rem 0;
+  }
+
+  .buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
   }
 }
-
-

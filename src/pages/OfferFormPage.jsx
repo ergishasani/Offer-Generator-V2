@@ -31,7 +31,7 @@ export default function OfferFormPage() {
   useEffect(() => {
     if (!user) return
     getDoc(doc(db, 'users', user.uid, 'companyProfile', 'profile'))
-      .then(snap => { if (snap.exists()) setCompanyProfile(snap.data()) })
+      .then(snap => snap.exists() && setCompanyProfile(snap.data()))
   }, [user])
 
   // Product catalog
@@ -42,12 +42,12 @@ export default function OfferFormPage() {
       const globalSnap = await getDocs(query(collection(db, 'products')))
       const global = globalSnap.docs.map(d => ({ id: d.id, source: 'global', ...d.data() }))
       const userSnap   = await getDocs(query(collection(db, 'users', user.uid, 'products')))
-      const userList   = userSnap.docs.map(d => ({ id: d.id, source: 'user', ...d.data() }))
+      const userList   = userSnap.docs.map(d => ({ id: d.id, source: 'user',   ...d.data() }))
       setCatalog([...global, ...userList])
     })()
   }, [user])
 
-  // Clients for dropdown
+  // Clients
   const [clients, setClients] = useState([])
   useEffect(() => {
     if (!user) return
@@ -58,28 +58,29 @@ export default function OfferFormPage() {
   }, [user])
 
   // Section 1: Contact & Offer Info
-  const [clientName, setClientName]             = useState('')
-  const [deliveryAddress, setDeliveryAddress]   = useState('')
-  const [regarding, setRegarding]               = useState('')
-  const [offerNumber, setOfferNumber]           = useState(Date.now().toString())
-  const [offerDate, setOfferDate]               = useState(new Date())
-  const [expiryDate, setExpiryDate]             = useState(new Date(Date.now() + 7*86400000))
-  const [referenceNumber, setReferenceNumber]   = useState('')
+  const [clientName, setClientName]           = useState('')
+  const [deliveryAddress, setDeliveryAddress] = useState('')
+  const [regarding, setRegarding]             = useState('')
+  const [offerNumber, setOfferNumber]         = useState(Date.now().toString())
+  const [offerDate, setOfferDate]             = useState(new Date())
+  const [expiryDate, setExpiryDate]           = useState(new Date(Date.now() + 7*86400000))
+  const [referenceNumber, setReferenceNumber] = useState('')
 
   // Section 2: Header Text
   const [headerText, setHeaderText] = useState('')
 
-  // Section 3: Line Items
+  // Section 3: Line Items + previewRefs
   const [rows, setRows] = useState([
     { id: '', name: '', quantity: 1, basePrice: 0, vatRate: 0.2, widthMm: 0, heightMm: 0 }
   ])
-  // use a ref-object keyed by row.id for previews
   const previewRefs = useRef({})
   const registerPreview = (rowId, ref) => {
     previewRefs.current[rowId] = ref
   }
   const updateRow = (idx, updated) =>
-    setRows(old => { const c = [...old]; c[idx] = updated; return c })
+    setRows(old => {
+      const c = [...old]; c[idx] = updated; return c
+    })
   const addRow = () =>
     setRows(old => [...old, { id: '', name: '', quantity: 1, basePrice: 0, vatRate: 0.2, widthMm: 0, heightMm: 0 }])
   const removeRow = idx =>
@@ -87,12 +88,11 @@ export default function OfferFormPage() {
 
   // Section 4: Totals & Discounts
   const [globalDiscount, setGlobalDiscount] = useState(0)
-  const subtotalNet       = rows.reduce((sum, r) => sum + r.basePrice * r.quantity, 0)
-  const discountFactor    = 1 - globalDiscount/100
-  const netAfterDiscount  = subtotalNet * discountFactor
-  const vatTotal          = rows.reduce(
-    (sum, r) => sum + r.basePrice*r.quantity*discountFactor*r.vatRate,
-    0
+  const subtotalNet      = rows.reduce((sum, r) => sum + r.basePrice * r.quantity, 0)
+  const discountFactor   = 1 - globalDiscount/100
+  const netAfterDiscount = subtotalNet * discountFactor
+  const vatTotal         = rows.reduce((sum, r) =>
+    sum + r.basePrice*r.quantity*discountFactor*r.vatRate, 0
   )
   const grandTotal = netAfterDiscount + vatTotal
 
@@ -106,7 +106,7 @@ export default function OfferFormPage() {
   const [paymentTerms, setPaymentTerms]         = useState('')
   const [vatRegulation, setVatRegulation]       = useState('domestic')
 
-  // Prefill existing offer if editing
+  // Prefill existing offer
   useEffect(() => {
     if (!user || !offerId) return
     ;(async () => {
@@ -129,12 +129,11 @@ export default function OfferFormPage() {
       setDeliveryConditions(o.deliveryConditions)
       setPaymentTerms(o.paymentTerms)
       setVatRegulation(o.vatRegulation)
-      // clear any old refs
       previewRefs.current = {}
     })()
   }, [user, offerId])
 
-  // Generate PDF, save & send
+  // ——— FIXED generatePDF ———
   const generatePDF = async () => {
     const margin = 40
     const pdf = new jsPDF({ unit: 'pt', format: 'a4' })
@@ -145,183 +144,207 @@ export default function OfferFormPage() {
     if (companyProfile) {
       pdf.setFontSize(14).text(companyProfile.name || '', margin, cursorY)
       pdf.setFontSize(10)
-      if (companyProfile.address) pdf.text(companyProfile.address, margin, cursorY+16)
+      if (companyProfile.address) pdf.text(companyProfile.address, margin, cursorY + 16)
       cursorY += 40
     }
 
-    // 2) Contact & offer info
+    // 2) Contact & Offer Info
     pdf.setFontSize(12).text(`Client: ${clientName}`, margin, cursorY)
     pdf.text(`Offer #: ${offerNumber}`, pageWidth - margin - 150, cursorY)
     cursorY += 16
     pdf.text(`Date: ${offerDate.toLocaleDateString()}`, margin, cursorY)
     pdf.text(`Expires: ${expiryDate.toLocaleDateString()}`, pageWidth - margin - 150, cursorY)
     cursorY += 20
-    if (referenceNumber) { pdf.text(`Ref/Order #: ${referenceNumber}`, margin, cursorY); cursorY += 16 }
-    if (regarding)       { pdf.text(`Regarding: ${regarding}`, margin, cursorY);     cursorY += 20 }
+    if (referenceNumber) {
+      pdf.text(`Ref/Order #: ${referenceNumber}`, margin, cursorY)
+      cursorY += 16
+    }
+    if (regarding) {
+      pdf.text(`Regarding: ${regarding}`, margin, cursorY)
+      cursorY += 20
+    }
 
     // 3) Header text
     if (headerText) {
       pdf.setFontSize(11)
-      const lines = pdf.splitTextToSize(headerText, pageWidth - margin*2)
+      const lines = pdf.splitTextToSize(headerText, pageWidth - margin * 2)
       pdf.text(lines, margin, cursorY)
-      cursorY += lines.length*14 + 20
+      cursorY += lines.length * 14 + 20
     }
 
     // 4) Totals summary
     pdf.setFontSize(12)
-      .text(`Subtotal (net): ${currency} ${subtotalNet.toFixed(2)}`, margin, cursorY);   cursorY += 14
-    pdf.text(`Discount (${globalDiscount}%): -${currency} ${(subtotalNet - netAfterDiscount).toFixed(2)}`, margin, cursorY); cursorY += 14
-    pdf.text(`Net after discount: ${currency} ${netAfterDiscount.toFixed(2)}`, margin, cursorY);                     cursorY += 14
-    pdf.text(`Total VAT: ${currency} ${vatTotal.toFixed(2)}`, margin, cursorY);                                         cursorY += 14
-    pdf.setFont(undefined,'bold')
-       .text(`Grand Total: ${currency} ${grandTotal.toFixed(2)}`, margin, cursorY)
-    pdf.setFont(undefined,'normal')
+      .text(`Subtotal (net): ${currency} ${subtotalNet.toFixed(2)}`, margin, cursorY)
+    cursorY += 14
+    pdf.text(`Discount (${globalDiscount}%): -${currency} ${(subtotalNet - netAfterDiscount).toFixed(2)}`, margin, cursorY)
+    cursorY += 14
+    pdf.text(`Net after discount: ${currency} ${netAfterDiscount.toFixed(2)}`, margin, cursorY)
+    cursorY += 14
+    pdf.text(`Total VAT: ${currency} ${vatTotal.toFixed(2)}`, margin, cursorY)
+    cursorY += 14
+    pdf.setFont(undefined, 'bold')
+      .text(`Grand Total: ${currency} ${grandTotal.toFixed(2)}`, margin, cursorY)
+    pdf.setFont(undefined, 'normal')
     cursorY += 20
 
-    // 5) Capture previews into an object by row.id
-    const previewImages = {}
-    for (let r of rows) {
-      const node = previewRefs.current[r.id]?.current
-      if (node instanceof HTMLElement) {
-        try {
-          const canvas = await html2canvas(node, { backgroundColor: null })
-          previewImages[r.id] = canvas.toDataURL('image/png')
-        } catch (e) {
-          console.warn('Preview capture failed for', r.id, e)
-        }
-      }
-    }
+    // 5) Rasterize preview cells into PNG
+    const previewPNGs = await Promise.all(
+      rows.map(async r => {
+        const node = previewRefs.current[r.id]?.current
+        if (!node) return null
+        const canvas = await html2canvas(node, { backgroundColor: null })
+        return canvas.toDataURL('image/png')
+      })
+    )
 
-    // 6) Items table with Preview column
-    const headers = ["#","Product","Qty","Unit Price","VAT %","Width","Height","Line Total","Preview"]
-    const body = rows.map((r,i) => {
-      const lineTotal = ((r.basePrice*r.quantity)*discountFactor*(1+r.vatRate)).toFixed(2)+' €'
+    // 6) Prepare table data (no SVG columns)
+    const headers = ["#","Product","Qty","Unit Price","VAT %","W (mm)","H (mm)","Line Total","Preview"]
+    const body = rows.map((r, i) => {
+      const lineTotal = ((r.basePrice * r.quantity) * discountFactor * (1 + r.vatRate)).toFixed(2)
       return [
-        i+1,
+        i + 1,
         r.name,
         r.quantity,
-        r.basePrice.toFixed(2)+' €',
-        (r.vatRate*100).toFixed(0)+'%',
+        r.basePrice.toFixed(2),
+        (r.vatRate * 100).toFixed(0) + '%',
         r.widthMm,
         r.heightMm,
         lineTotal,
-        ''  // placeholder
+        '' // placeholder for the preview PNG
       ]
     })
 
+    // 7) Draw the table with margins & fixed width
     autoTable(pdf, {
-      head:[headers],
+      startY: cursorY,
+      margin: { left: margin, right: margin },
+      tableWidth: pageWidth - margin * 2,
+      head: [headers],
       body,
-      startY:cursorY,
-      margin:{left:margin, right:margin},
-      styles:{fontSize:9, cellPadding:4},
-      columnStyles:{
-        0:{cellWidth:20},
-        1:{cellWidth:120},
-        2:{cellWidth:40, halign:'right'},
-        3:{cellWidth:60, halign:'right'},
-        4:{cellWidth:50, halign:'right'},
-        5:{cellWidth:50, halign:'right'},
-        6:{cellWidth:50, halign:'right'},
-        7:{cellWidth:60, halign:'right'},
-        8:{cellWidth:40, halign:'center'}
+      styles: { fontSize: 9, cellPadding: 4 },
+      columnStyles: {
+        0: { cellWidth: 20 },
+        1: { cellWidth: 100 },
+        2: { cellWidth: 30, halign: 'right' },
+        3: { cellWidth: 60, halign: 'right' },
+        4: { cellWidth: 40, halign: 'right' },
+        5: { cellWidth: 40, halign: 'right' },
+        6: { cellWidth: 40, halign: 'right' },
+        7: { cellWidth: 60, halign: 'right' },
+        8: { cellWidth: 40, halign: 'center' }
       },
-      didDrawCell: (cell) => {
-        if (cell.section==='body' && cell.column.index===8) {
-          const r = rows[cell.row.index]
-          const img = previewImages[r.id]
-          if (img) {
-            const {x,y,width,height} = cell.cell
-            const size = Math.min(width,height)-8
-            pdf.addImage(img,'PNG', x+(width-size)/2, y+4, size, size)
-          }
+      didDrawCell: data => {
+        // Inject the preview PNG into the last column
+        if (data.section === 'body' && data.column.index === 8 && previewPNGs[data.row.index]) {
+          const img = previewPNGs[data.row.index]
+          const { x, y, width, height } = data.cell
+          const size = Math.min(width, height) - 4
+          pdf.addImage(img, 'PNG', x + 2, y + 2, size, size)
         }
       },
-      willDrawCell: (cell) => {
-        if (cell.section==='body' && cell.row.index===rows.length-1) {
+      willDrawCell: data => {
+        // Add page numbers on the last row
+        if (data.section === 'body' && data.row.index === rows.length - 1) {
           const pageCount = pdf.internal.getNumberOfPages()
-          for (let i=1; i<=pageCount; i++) {
+          for (let i = 1; i <= pageCount; i++) {
             pdf.setPage(i).setFontSize(9)
-            pdf.text(`Page ${i} / ${pageCount}`,
-                     pageWidth/2,
-                     pdf.internal.pageSize.getHeight()-20,
-                     { align:'center' })
+            pdf.text(
+              `Page ${i} / ${pageCount}`,
+              pageWidth / 2,
+              pdf.internal.pageSize.getHeight() - 20,
+              { align: 'center' }
+            )
           }
         }
-      },
-      didDrawPage: (page) => {
-        cursorY = page.cursor.y + 10
       }
     })
 
+    // 8) Move cursor below the table
     cursorY = pdf.lastAutoTable.finalY + 20
 
-    // 7) Footer text
+    // 9) Footer text
     if (footerText) {
       pdf.setFontSize(10)
-      const lines = pdf.splitTextToSize(footerText, pageWidth-margin*2)
+      const lines = pdf.splitTextToSize(footerText, pageWidth - margin * 2)
       pdf.text(lines, margin, cursorY)
-      cursorY += lines.length*12 + 20
+      cursorY += lines.length * 12 + 20
     }
 
-    // 8) More options
+    // 10) More options
     pdf.setFontSize(9)
-    pdf.text(`Currency: ${currency}`, margin, cursorY); cursorY +=12
-    if (internalContact)   pdf.text(`Contact: ${internalContact}`, margin, cursorY), cursorY+=12
-    if (deliveryConditions)pdf.text(`Delivery Conditions: ${deliveryConditions}`, margin, cursorY), cursorY+=12
-    if (paymentTerms)      pdf.text(`Payment Terms: ${paymentTerms}`, margin, cursorY), cursorY+=12
+    pdf.text(`Currency: ${currency}`, margin, cursorY); cursorY += 12
+    if (internalContact)    pdf.text(`Contact: ${internalContact}`, margin, cursorY), cursorY += 12
+    if (deliveryConditions) pdf.text(`Delivery Conditions: ${deliveryConditions}`, margin, cursorY), cursorY += 12
+    if (paymentTerms)       pdf.text(`Payment Terms: ${paymentTerms}`, margin, cursorY), cursorY += 12
     pdf.text(`VAT Regulation: ${vatRegulation}`, margin, cursorY)
 
-    // 9) Save PDF
+    // 11) Save PDF
     pdf.save(`Offer-${offerNumber}.pdf`)
 
-    // 10) Persist & send
+    // 12) Persist & send
     const payload = {
-      clientName, deliveryAddress, regarding, offerNumber,
-      offerDate:offerDate.toISOString(), expiryDate:expiryDate.toISOString(),
-      referenceNumber, headerText, rows, globalDiscount,
-      footerText, currency, internalContact,
-      deliveryConditions, paymentTerms, vatRegulation,
-      status:'sent', sentAt:new Date().toISOString(),
-      ...( !offerId && { createdAt:new Date().toISOString() })
+      clientName,
+      deliveryAddress,
+      regarding,
+      offerNumber,
+      offerDate: offerDate.toISOString(),
+      expiryDate: expiryDate.toISOString(),
+      referenceNumber,
+      headerText,
+      rows,
+      globalDiscount,
+      footerText,
+      currency,
+      internalContact,
+      deliveryConditions,
+      paymentTerms,
+      vatRegulation,
+      status: 'sent',
+      sentAt: new Date().toISOString(),
+      ...( !offerId && { createdAt: new Date().toISOString() })
     }
-
     let docRef
     if (offerId) {
-      docRef = doc(db,'users',user.uid,'offers',offerId)
-      await updateDoc(docRef,payload)
+      docRef = doc(db, 'users', user.uid, 'offers', offerId)
+      await updateDoc(docRef, payload)
     } else {
-      docRef = await addDoc(collection(db,'users',user.uid,'offers'),payload)
+      docRef = await addDoc(collection(db, 'users', user.uid, 'offers'), payload)
     }
-
     const functions = getFunctions()
-    const sendOffer = httpsCallable(functions,'sendOfferEmail')
-    await sendOffer({ offerId:docRef.id, uid:user.uid })
+    const sendOffer = httpsCallable(functions, 'sendOfferEmail')
+    await sendOffer({ offerId: docRef.id, uid: user.uid })
   }
 
   return (
     <div className="offer-form-page">
       <h1>{offerId ? 'Edit Offer' : 'Create Offer'}</h1>
 
-      {/* Section 1 */}
+      {/* Section 1: Contact & Offer Info */}
       <section className="section-contact">
         <h2>Contact & Offer Info</h2>
         <div className="grid-2">
           <label>
             Client
-            <div style={{display:'flex',alignItems:'center',gap:'0.5rem'}}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <select
-                value={clients.find(c=>c.name===clientName)?.id||''}
-                onChange={e=>{
-                  const sel=clients.find(c=>c.id===e.target.value)
-                  if(sel){ setClientName(sel.name); setDeliveryAddress(sel.address) }
-                  else{ setClientName(''); setDeliveryAddress('') }
+                value={clients.find(c => c.name === clientName)?.id || ''}
+                onChange={e => {
+                  const sel = clients.find(c => c.id === e.target.value)
+                  if (sel) {
+                    setClientName(sel.name)
+                    setDeliveryAddress(sel.address)
+                  } else {
+                    setClientName('')
+                    setDeliveryAddress('')
+                  }
                 }}
                 required
               >
                 <option value="">— Select client —</option>
-                {clients.map(c=>(
-                  <option key={c.id} value={c.id}>{c.name}</option>
+                {clients.map(c => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
                 ))}
               </select>
               <Link to="/clients/new">+ Add Client</Link>
@@ -329,128 +352,164 @@ export default function OfferFormPage() {
           </label>
           <label>
             Offer Number
-            <input type="text" value={offerNumber}
-                   onChange={e=>setOfferNumber(e.target.value)} />
+            <input
+              type="text"
+              value={offerNumber}
+              onChange={e => setOfferNumber(e.target.value)}
+            />
           </label>
           <label>
             Delivery Address
-            <input type="text" value={deliveryAddress}
-                   onChange={e=>setDeliveryAddress(e.target.value)} />
+            <input
+              type="text"
+              value={deliveryAddress}
+              onChange={e => setDeliveryAddress(e.target.value)}
+            />
           </label>
           <label>
             Reference #
-            <input type="text" value={referenceNumber}
-                   onChange={e=>setReferenceNumber(e.target.value)} />
+            <input
+              type="text"
+              value={referenceNumber}
+              onChange={e => setReferenceNumber(e.target.value)}
+            />
           </label>
           <label>
             Regarding
-            <input type="text" value={regarding}
-                   onChange={e=>setRegarding(e.target.value)} />
+            <input
+              type="text"
+              value={regarding}
+              onChange={e => setRegarding(e.target.value)}
+            />
           </label>
           <label>
             Offer Date
-            <DatePicker selected={offerDate}
-                        onChange={setOfferDate} />
+            <DatePicker selected={offerDate} onChange={setOfferDate} />
           </label>
           <label>
             Expiry Date
-            <DatePicker selected={expiryDate}
-                        onChange={setExpiryDate} />
+            <DatePicker selected={expiryDate} onChange={setExpiryDate} />
           </label>
         </div>
       </section>
 
-      {/* Section 2 */}
+      {/* Section 2: Header Text */}
       <section className="section-header">
         <h2>Header Text</h2>
-        <textarea rows={4}
-                  placeholder="Custom greeting or introduction..."
-                  value={headerText}
-                  onChange={e=>setHeaderText(e.target.value)} />
+        <textarea
+          rows={4}
+          placeholder="Custom greeting or introduction…"
+          value={headerText}
+          onChange={e => setHeaderText(e.target.value)}
+        />
       </section>
 
-      {/* Section 3 */}
+      {/* Section 3: Line Items */}
       <section className="section-line-items">
-        <button className="add-button" onClick={addRow}>+ Add Line Item</button>
+        <button className="add-button" onClick={addRow}>
+          + Add Line Item
+        </button>
         <table>
           <thead>
             <tr>
-              <th>#</th><th>Product</th><th>Qty</th>
-              <th>Unit Price</th><th>VAT Rate</th>
-              <th>Width (mm)</th><th>Height (mm)</th>
-              <th>Preview</th><th>Actions</th>
+              <th>#</th>
+              <th>Product</th>
+              <th>Qty</th>
+              <th>Unit Price</th>
+              <th>VAT Rate</th>
+              <th>Width (mm)</th>
+              <th>Height (mm)</th>
+              <th>Preview</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {rows.map((r,i)=>(
+            {rows.map((r, i) => (
               <ProductRow
                 key={i}
                 index={i}
                 products={catalog}
                 item={r}
-                onChange={upd=>updateRow(i,upd)}
-                onRemove={()=>removeRow(i)}
-                registerPreview={ref=>registerPreview(r.id,ref)}
+                onChange={upd => updateRow(i, upd)}
+                onRemove={() => removeRow(i)}
+                registerPreview={ref => registerPreview(r.id, ref)}
               />
             ))}
           </tbody>
         </table>
       </section>
 
-      {/* Section 4 */}
+      {/* Section 4: Totals & Discounts */}
       <section className="section-totals">
         <h2>Totals & Discounts</h2>
         <label>
-          Global Discount (%) 
-          <input type="number" value={globalDiscount}
-                 onChange={e=>setGlobalDiscount(parseFloat(e.target.value))}
-                 step="0.1" min="0" />
+          Global Discount (%)
+          <input
+            type="number"
+            value={globalDiscount}
+            onChange={e => setGlobalDiscount(parseFloat(e.target.value))}
+            step="0.1"
+            min="0"
+          />
         </label>
         <div>Subtotal (net): {currency} {subtotalNet.toFixed(2)}</div>
-        <div>Net after discount: {currency} {netAfterDiscount.toFixed(2)} (–{currency} {(subtotalNet-netAfterDiscount).toFixed(2)})</div>
+        <div>
+          Net after discount: {currency} {netAfterDiscount.toFixed(2)}{' '}
+          (–{currency} {(subtotalNet - netAfterDiscount).toFixed(2)})
+        </div>
         <div>Total VAT: {currency} {vatTotal.toFixed(2)}</div>
         <div className="grand-total">Grand Total: {currency} {grandTotal.toFixed(2)}</div>
       </section>
 
-      {/* Section 5 */}
+      {/* Section 5: Footer Text */}
       <section className="section-footer">
         <h2>Footer Text</h2>
-        <textarea rows={3}
-                  value={footerText}
-                  onChange={e=>setFooterText(e.target.value)} />
+        <textarea
+          rows={3}
+          value={footerText}
+          onChange={e => setFooterText(e.target.value)}
+        />
       </section>
 
-      {/* Section 6 */}
+      {/* Section 6: More Options */}
       <section className="section-more">
         <h2>More Options</h2>
         <div className="grid-2">
           <label>
             Currency
-            <select value={currency} onChange={e=>setCurrency(e.target.value)}>
-              <option>EUR</option><option>USD</option><option>CHF</option>
+            <select value={currency} onChange={e => setCurrency(e.target.value)}>
+              <option>EUR</option>
+              <option>USD</option>
+              <option>CHF</option>
             </select>
           </label>
           <label>
             Internal Contact Person
-            <input type="text"
-                   value={internalContact}
-                   onChange={e=>setInternalContact(e.target.value)} />
+            <input
+              type="text"
+              value={internalContact}
+              onChange={e => setInternalContact(e.target.value)}
+            />
           </label>
           <label>
             Delivery Conditions
-            <textarea rows={2}
-                      value={deliveryConditions}
-                      onChange={e=>setDeliveryConditions(e.target.value)} />
+            <textarea
+              rows={2}
+              value={deliveryConditions}
+              onChange={e => setDeliveryConditions(e.target.value)}
+            />
           </label>
           <label>
             Payment Terms
-            <textarea rows={2}
-                      value={paymentTerms}
-                      onChange={e=>setPaymentTerms(e.target.value)} />
+            <textarea
+              rows={2}
+              value={paymentTerms}
+              onChange={e => setPaymentTerms(e.target.value)}
+            />
           </label>
           <label>
             VAT Regulation
-            <select value={vatRegulation} onChange={e=>setVatRegulation(e.target.value)}>
+            <select value={vatRegulation} onChange={e => setVatRegulation(e.target.value)}>
               <option value="domestic">Domestic</option>
               <option value="intra-EU">Intra-EU</option>
               <option value="export">Export</option>
