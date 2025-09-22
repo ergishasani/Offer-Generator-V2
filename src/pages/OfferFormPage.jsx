@@ -319,79 +319,115 @@ export default function OfferFormPage() {
     <div className="offer-form-page">
       <h1>{offerId ? 'Edit Offer' : 'Create Offer'}</h1>
 
-      {/* Section 1: Contact & Offer Info */}
-      <section className="section-contact">
-        <h2>Contact & Offer Info</h2>
-        <div className="grid-2">
-          <label>
-            Client
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <select
-                value={clients.find(c => c.name === clientName)?.id || ''}
-                onChange={e => {
-                  const sel = clients.find(c => c.id === e.target.value)
-                  if (sel) {
-                    setClientName(sel.name)
-                    setDeliveryAddress(sel.address)
-                  } else {
-                    setClientName('')
-                    setDeliveryAddress('')
-                  }
-                }}
-                required
-              >
-                <option value="">— Select client —</option>
-                {clients.map(c => (
-                  <option key={c.id} value={c.id}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
-              <Link to="/clients/new">+ Add Client</Link>
-            </div>
-          </label>
-          <label>
-            Offer Number
-            <input
-              type="text"
-              value={offerNumber}
-              onChange={e => setOfferNumber(e.target.value)}
-            />
-          </label>
-          <label>
-            Delivery Address
-            <input
-              type="text"
-              value={deliveryAddress}
-              onChange={e => setDeliveryAddress(e.target.value)}
-            />
-          </label>
-          <label>
-            Reference #
-            <input
-              type="text"
-              value={referenceNumber}
-              onChange={e => setReferenceNumber(e.target.value)}
-            />
-          </label>
-          <label>
-            Regarding
-            <input
-              type="text"
-              value={regarding}
-              onChange={e => setRegarding(e.target.value)}
-            />
-          </label>
-          <label>
-            Offer Date
-            <DatePicker selected={offerDate} onChange={setOfferDate} />
-          </label>
-          <label>
-            Expiry Date
-            <DatePicker selected={expiryDate} onChange={setExpiryDate} />
-          </label>
-        </div>
-      </section>
+    {/* Section 1: Contact & Offer Info */}
+<section className="section_contact">
+  <h2 className="section_contact_title">Contact & Offer Info</h2>
+  <div className="section_contact_grid">
+    {/* Client */}
+    <div className="form_field">
+      <label htmlFor="client" className="form_field_label">Client</label>
+      <div className="form_field_control_group">
+        <select
+          id="client"
+          className="form_field_control"
+          value={clients.find(c => c.name === clientName)?.id || ''}
+          onChange={e => {
+            const sel = clients.find(c => c.id === e.target.value)
+            if (sel) {
+              setClientName(sel.name)
+              setDeliveryAddress(sel.address)
+            } else {
+              setClientName('')
+              setDeliveryAddress('')
+            }
+          }}
+          required
+        >
+          <option value="">— Select client —</option>
+          {clients.map(c => (
+            <option key={c.id} value={c.id}>
+              {c.name}
+            </option>
+          ))}
+        </select>
+        <Link to="/clients/new" className="form_field_add_link">
+          + Add Client
+        </Link>
+      </div>
+    </div>
+
+    {/* Offer Number */}
+    <div className="form_field">
+      <label htmlFor="offer_number" className="form_field_label">Offer Number</label>
+      <input
+        id="offer_number"
+        type="text"
+        className="form_field_control"
+        value={offerNumber}
+        onChange={e => setOfferNumber(e.target.value)}
+      />
+    </div>
+
+    {/* Delivery Address */}
+    <div className="form_field">
+      <label htmlFor="delivery_address" className="form_field_label">Delivery Address</label>
+      <input
+        id="delivery_address"
+        type="text"
+        className="form_field_control"
+        value={deliveryAddress}
+        onChange={e => setDeliveryAddress(e.target.value)}
+      />
+    </div>
+
+    {/* Reference # */}
+    <div className="form_field">
+      <label htmlFor="reference_number" className="form_field_label">Reference #</label>
+      <input
+        id="reference_number"
+        type="text"
+        className="form_field_control"
+        value={referenceNumber}
+        onChange={e => setReferenceNumber(e.target.value)}
+      />
+    </div>
+
+    {/* Regarding */}
+    <div className="form_field">
+      <label htmlFor="regarding" className="form_field_label">Regarding</label>
+      <input
+        id="regarding"
+        type="text"
+        className="form_field_control"
+        value={regarding}
+        onChange={e => setRegarding(e.target.value)}
+      />
+    </div>
+
+    {/* Offer Date */}
+    <div className="form_field">
+      <label htmlFor="offer_date" className="form_field_label">Offer Date</label>
+      <DatePicker
+        id="offer_date"
+        className="form_field_control"
+        selected={offerDate}
+        onChange={setOfferDate}
+      />
+    </div>
+
+    {/* Expiry Date */}
+    <div className="form_field">
+      <label htmlFor="expiry_date" className="form_field_label">Expiry Date</label>
+      <DatePicker
+        id="expiry_date"
+        className="form_field_control"
+        selected={expiryDate}
+        onChange={setExpiryDate}
+      />
+    </div>
+  </div>
+</section>
+
 
       {/* Section 2: Header Text */}
       <section className="section-header">
