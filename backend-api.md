@@ -1,8 +1,4 @@
-Here’s your **WindowInvoice Pro Backend API & Database Documentation** in clean **Markdown (.md)** format — ready to drop in your repo (e.g. `docs/backend.md`):
 
----
-
-````markdown
 # 🧱 WindowInvoice Pro – Backend API & Database Specification
 
 **Stack:**
