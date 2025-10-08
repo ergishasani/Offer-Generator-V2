@@ -1,4 +1,3 @@
-
 # 🧱 WindowInvoice Pro – Backend API & Database Specification
 
 **Stack:**
@@ -374,8 +373,3 @@ Start with:
 - [ ] Implement **Spring Boot Entities + Repositories**
 - [ ] Add **MapStruct DTOs**
 - [ ] Setup **Flyway** for migrations
-
-```
-
-```
-````
